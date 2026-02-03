@@ -14,7 +14,7 @@ def buy(bal, matcoin, matcoin_price):
     print(f"Ваш баланс: {bal}$")
     print("Доступные валюты:\n")
     
-    print(f"1. Маткоин ({matcoin_price})")
+    print(f"1. Маткоин ({matcoin_price}$ → 1)")
     print("0. Выход")
     
     print("\nКакую валюту вы вы хотите приобрести?")
@@ -36,6 +36,34 @@ def buy(bal, matcoin, matcoin_price):
         input()
         return bal, matcoin
 
+def sell(bal, matcoin, matcoin_price):
+    clear()
+    print(f"Ваш баланс: {bal}$")
+    print(f"Ваши маткоины: {matcoin}\n")
+    print("Доступные валюты:\n")
+    
+    print(f"1. Маткоин (1 → {matcoin_price}$)")
+    print("0. Выход")
+    
+    print("\nКакую валюту вы вы хотите продать?")
+    userinput = input("> ")
+    
+    if userinput == "1":
+        if matcoin <= 0:
+            print("У вас нет маткоинов для продажи")
+            input()
+            return bal, matcoin
+        else:
+            bal += matcoin_price
+            matcoin -= 1
+            return bal, matcoin
+    elif userinput == "0":       
+        return bal, matcoin
+    else:
+        print(f"Валюта с номером {userinput} не найдена")    
+        input()
+        return bal, matcoin
+    
 def main():
     bal = 100
     matcoin = 0
@@ -47,12 +75,13 @@ def main():
         clear()
         print(f"Ваш баланс: {bal}$")
         print(f"Ваши маткоины: {matcoin}")
-        print(f"\nКурс маткоина: 1 – {matcoin_price}")
+        print(f"\nКурс маткоина: 1 → {matcoin_price}$")
         
         print("\nЧто вы хотите сделать?")
         print("1. Ничего")
         print("2. Выйти")
         print("3. Приобрести")
+        print("4. Продать")
         
         userinput = input("> ")
         
@@ -63,6 +92,14 @@ def main():
             data = buy(bal, matcoin, matcoin_price)
             bal = data[0]
             matcoin = data[1]
+        elif userinput == "4":
+            data = sell(bal, matcoin, matcoin_price)
+            bal = data[0]
+            matcoin = data[1]
+        elif userinput == "1":
+            pass
+        else:
+            pass
 
 if __name__ == "__main__":
     try:
