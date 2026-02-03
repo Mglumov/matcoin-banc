@@ -2,12 +2,41 @@ import os
 import random
 import sys
 import platform
+import json
 
 def clear():
     if platform.system() == "Windows":
         os.system("cls")
     else:
         os.system("clear")
+
+def save_game(bal, matcoin, matcoin_price):
+    """сохранить прогресс игры"""
+    
+    data = {
+        'balance': bal,
+        'matcoin': matcoin,
+        'matcoin_price': matcoin_price
+    }
+    
+    with open('save.json', 'w', encoding='utf-8') as file:
+        json.dump(data, file)
+        
+    print("Сохранение успешно!")
+
+def load_game():
+    """загрузить прогресс игры"""
+    
+    try:
+        with open('save.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+        return data['balance'], data['matcoin'], data['matcoin_price']
+    
+    except FileNotFoundError:
+        return "notfound"
+    except Exception:
+        return None
 
 def buy(bal, matcoin, matcoin_price):
     clear()
@@ -82,12 +111,20 @@ def main():
         print("2. Выйти")
         print("3. Приобрести")
         print("4. Продать")
+        print("5. Сохранить прогресс")
+        print("6. Загрузить прогресс")
         
         userinput = input("> ")
         
         if userinput == "2":
-            print("\nПока!")
-            sys.exit(0)
+            are_you_sure = input("Вы уверены что хотите выйти из игры? (сохранение нужно делать вручную!)\n> ")
+            
+            if are_you_sure.lower() in ("y", "yes", "д", "да"):
+                print("\nПока!")
+                sys.exit(0)
+            else:
+                continue
+            
         elif userinput == "3":
             data = buy(bal, matcoin, matcoin_price)
             bal = data[0]
@@ -96,6 +133,25 @@ def main():
             data = sell(bal, matcoin, matcoin_price)
             bal = data[0]
             matcoin = data[1]
+        elif userinput == "5":
+            save_game(bal, matcoin, matcoin_price)
+        elif userinput == "6":
+            save = load_game()
+            
+            if save is None:
+                print("Произоршла ошибка при загрузке сохранения")
+                input()
+                continue
+            elif save == "notfound":
+                print("Сохранение не было найдено")
+                input()
+                continue
+            else:
+                pass
+            
+            bal = save[0]
+            matcoin = save[1]
+            matcoin_price = save[2]
         elif userinput == "1":
             pass
         else:
