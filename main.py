@@ -2,7 +2,7 @@ import os
 import random
 import sys
 import platform
-import json
+import pickle
 import hashlib
 
 def clear():
@@ -20,8 +20,8 @@ def save_game(bal, matcoin, matcoin_price):
         'matcoin_price': matcoin_price
     }
     
-    with open('save.json', 'w', encoding='utf-8') as file:
-        json.dump(data, file)
+    with open('save.pkl', 'wb') as file:
+        pickle.dump(data, file)
         
     print("Сохранение успешно!")
 
@@ -29,8 +29,8 @@ def load_game():
     """загрузить прогресс игры"""
     
     try:
-        with open('save.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        with open('save.pkl', 'rb') as f:
+            data = pickle.load(f)
             
         return data['balance'], data['matcoin'], data['matcoin_price']
     
