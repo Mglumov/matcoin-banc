@@ -38,6 +38,27 @@ def load_game():
     except Exception:
         return None
 
+
+def cost_change(matcoin_price):
+    way = bool(random.getrandbits(1))
+    
+    if way:
+        cost = random.randint(0, 190)
+        return cost
+    else:
+        cost = random.randint(-190, 0)
+        if cost < 0:
+            return 0
+        return cost 
+    
+
+
+
+
+
+
+
+
 def admin(bal, matcoin, matcoin_price):
     clear()
     print("Добро пожаловать в админ панель\n")
@@ -188,6 +209,8 @@ def main():
             pass
         else:
             pass
+            
+        matcoin_price = cost_change(matcoin_price)    
 
 if __name__ == "__main__":
     try:
