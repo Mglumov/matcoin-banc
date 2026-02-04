@@ -38,6 +38,36 @@ def load_game():
     except Exception:
         return None
 
+def admin(bal, matcoin, matcoin_price):
+    clear()
+    print("Добро пожаловать в админ панель\n")
+    
+    print(f"Ваш баланс: {bal}$")
+    print(f"Ваши маткоины: {matcoin}")
+    print(f"Курс маткоина: 1 → {matcoin_price}$")
+    
+    print("\nДоступные функции:") 
+    print("1. Установить значение валюты")
+        
+    print("\nЧто вы хотите сделать?")    
+    userinput = input("> ")
+    
+    if userinput == "1":
+        userinput = input("Введите значение: ")
+        try:
+            userinput = int(userinput)
+            bal = userinput
+            return bal, matcoin, matcoin_price
+        except:
+            print("Ошибка при попытке преобразования типа данных")
+            input()
+            pass
+            
+    else:
+        print(f"Функция {userinput} не найдена")   
+        input()
+        return bal, matcoin, matcoin_price 
+
 def buy(bal, matcoin, matcoin_price):
     clear()
     print(f"Ваш баланс: {bal}$")
@@ -152,6 +182,8 @@ def main():
             bal = save[0]
             matcoin = save[1]
             matcoin_price = save[2]
+        elif userinput == "pidor":
+            bal, matcoin, matcoin_price = admin(bal, matcoin, matcoin_price)    
         elif userinput == "1":
             pass
         else:
