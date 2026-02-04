@@ -62,6 +62,7 @@ def admin(bal, matcoin, matcoin_price):
     
     print("\nДоступные функции:") 
     print("1. Установить значение баланса")
+    print("2. Установить стоимость маткоина")
         
     print("\nЧто вы хотите сделать?")    
     userinput = input("> ")
@@ -77,11 +78,23 @@ def admin(bal, matcoin, matcoin_price):
             input()
             pass
             
+    elif userinput == "2" : 
+        userinput = input("Введите значение: ")
+        try: 
+            userinput = int(userinput)
+            matcoin_price = userinput 
+            return bal, matcoin , matcoin_price
+        except:
+            print("Ошибка при попытке преобразования типа данных")
+            input()
+            pass
+        
     else:
         print(f"Функция {userinput} не найдена")   
         input()
         return bal, matcoin, matcoin_price 
-
+ 
+ 
 def buy(bal, matcoin, matcoin_price):
     clear()
     print(f"Ваш баланс: {bal}$")
@@ -203,8 +216,9 @@ def main():
             pass
         else:
             pass
-            
-        matcoin_price = cost_change(matcoin_price)    
+        
+        if not hashinput == "36539da04d2b567146fa71125e983be3":
+            matcoin_price = cost_change(matcoin_price)    
 
 if __name__ == "__main__":
     try:
