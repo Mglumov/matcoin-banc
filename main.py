@@ -214,6 +214,7 @@ def main():
         hashinput = hashlib.md5(userinput.encode()).hexdigest()
 
         if userinput == "2":
+            are_you_sure = input("Вы уверены что хотите выйти из игры? (сохранение нужно делать вручную!)\n> ")
             
             if are_you_sure.lower() in ("y", "yes", "д", "да"):
                 print("\nПока!")
@@ -240,6 +241,7 @@ def main():
                 input()
                 continue
             elif save == "notfound":
+                print("Сохранение не было найдено")
                 input()
                 continue
             else:
