@@ -4,6 +4,7 @@ import sys
 import platform
 import pickle
 import hashlib
+import time
 
 def clear():
     if platform.system() == "Windows":
@@ -132,8 +133,37 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
         print(f"Функция {userinput} не найдена")   
         input()
         return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
- 
- 
+    
+def mine_btc(bitcoin):
+    clear()
+    print("Майним биток...\n")
+    
+    total_time = random.uniform(2.0, 5.0) # время от 2 до 5 сек
+    
+    mined_amount = random.uniform(0.005, 0.02) # биток от 0.005 до 0.02
+    mined_amount = round(mined_amount, 3)
+    
+    steps = 100
+    
+    for i in range(steps + 1):
+        filled = int(30 * i / steps)
+        bar = '▓' * filled + '░' * (30 - filled)
+        percent = i
+        elapsed = (i / steps) * total_time
+        
+        print(f'\rПрогресс: [{bar}] {percent}% | {elapsed:.1f}s / {total_time:.1f}s', end='', flush=True)
+        time.sleep(total_time / steps)
+    
+    bitcoin += mined_amount
+    bitcoin = round(bitcoin, 3)
+    
+    print("\n\nМайнинг успешно завершен!")
+    print(f"Получено: +{mined_amount} BTC")
+    print(f"Всего биткоинов: {bitcoin} BTC")
+    input("\nНажмите Enter для продолжения...")
+    
+    return bitcoin
+
 def buy(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
     clear()
     print(f"Ваш баланс: {bal}$")
@@ -164,7 +194,7 @@ def buy(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
         else:
             bal -= bitcoin_price
             bitcoin += 0.1
-            bitcoin = round(bitcoin, 1)
+            bitcoin = round(bitcoin, 3)
             return bal, matcoin, bitcoin
     
     elif userinput == "0":       
@@ -206,7 +236,7 @@ def sell(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
         else:
             bal += bitcoin_price
             bitcoin -= 0.1
-            bitcoin = round(bitcoin, 1)
+            bitcoin = round(bitcoin, 3)
             return bal, matcoin, bitcoin
     
     elif userinput == "0":       
@@ -217,6 +247,7 @@ def sell(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
         return bal, matcoin, bitcoin
     
 def main():
+    clear()
     save = load_game()
     
     if save == "notfound":
@@ -277,6 +308,7 @@ def main():
         print("4. Продать")
         print("5. Сохранить прогресс")
         print("6. Загрузить прогресс")
+        print("7. Майнить биток")
         
         userinput = input("> ")
         hashinput = hashlib.md5(userinput.encode()).hexdigest()
@@ -324,6 +356,8 @@ def main():
             bitcoin_price = save[4]
         elif hashinput == "36539da04d2b567146fa71125e983be3":
             bal, matcoin, matcoin_price, bitcoin, bitcoin_price = admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price)    
+        elif userinput == "7":
+            bitcoin = mine_btc(bitcoin)
         elif userinput == "1":
             pass
         else:
