@@ -165,9 +165,28 @@ def sell(bal, matcoin, matcoin_price):
         return bal, matcoin
     
 def main():
-    bal = 100
-    matcoin = 0
-    matcoin_price = random.randint(45, 67)
+    save = load_game()
+    
+    if save == "notfound":
+        print("Сохранение не найдено. Начинаем новую игру...")
+        bal = 100
+        matcoin = 0
+        matcoin_price = random.randint(45, 67)
+        input("Нажмите Enter для продолжения...")
+        
+    elif save is None:
+        print("Ошибка при загрузке сохранения. Начинаем новую игру...")
+        bal = 100
+        matcoin = 0
+        matcoin_price = random.randint(45, 67)
+        input("Нажмите Enter для продолжения...")
+    else:
+        print("Сохранение успешно загружено!")
+        bal = save[0]
+        matcoin = save[1]
+        matcoin_price = save[2]
+        input("Нажмите Enter для продолжения...")
+    
     previous_price = matcoin_price
     
     while True:
@@ -195,7 +214,6 @@ def main():
         hashinput = hashlib.md5(userinput.encode()).hexdigest()
 
         if userinput == "2":
-            are_you_sure = input("Вы уверены что хотите выйти из игры? (сохранение нужно делать вручную!)\n> ")
             
             if are_you_sure.lower() in ("y", "yes", "д", "да"):
                 print("\nПока!")
@@ -213,15 +231,15 @@ def main():
             matcoin = data[1]
         elif userinput == "5":
             save_game(bal, matcoin, matcoin_price)
+            input("Нажмите Enter для продолжения...")
         elif userinput == "6":
             save = load_game()
             
             if save is None:
-                print("Произоршла ошибка при загрузке сохранения")
+                print("Произошла ошибка при загрузке сохранения")
                 input()
                 continue
             elif save == "notfound":
-                print("Сохранение не было найдено")
                 input()
                 continue
             else:
@@ -238,7 +256,8 @@ def main():
             pass
         
         if not hashinput == "36539da04d2b567146fa71125e983be3":
-            matcoin_price = cost_change(matcoin_price)    
+            previous_price = matcoin_price
+            matcoin_price = cost_change(matcoin_price)
 
 if __name__ == "__main__":
     try:
