@@ -92,6 +92,9 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
     print("1. Установить значение баланса")
     print("2. Установить стоимость маткоина")
     print("3. Установить стоимость биткоина")
+    print("4. Установить значение баланса маткоина")
+    print("5. Установить значение баланса биткоина ")
+
         
     print("\nЧто вы хотите сделать?")    
     userinput = input("> ")
@@ -128,6 +131,28 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
             print("Ошибка при попытке преобразования типа данных")
             input()
             pass
+        
+    elif userinput == "4":
+        userinput = input("Введите значение: ")
+        try:
+            userinput = int(userinput)
+            matcoin = userinput
+            return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
+        except:
+            print("Ошибка при попытке преобразования типа данных")
+            input()
+            pass    
+
+    elif userinput == "5":
+        userinput = input("Введите значение: ")
+        try:
+            userinput = int(userinput)
+            bitcoin = userinput
+            return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
+        except:
+            print("Ошибка при попытке преобразования типа данных")
+            input()
+            pass    
         
     else:
         print(f"Функция {userinput} не найдена")   
