@@ -6,6 +6,58 @@ import pickle
 import hashlib
 import time
 
+class ColorSystem:
+    def __init__(self):
+        self.support_colors = self._check_color_support()
+    
+    def _check_color_support(self):
+        if platform.system() == 'Windows':
+            if sys.platform == 'win32':
+                os.system('color')
+                return True
+        
+        if 'TERM' in os.environ and os.environ['TERM'] != 'dumb':
+            return True
+        
+        return sys.stdout.isatty()
+    
+    def _colorize(self, text, color_code):
+        if not self.support_colors:
+            return text
+        return f"\033[{color_code}m{text}\033[0m"
+    
+    def red(self, text):
+        return self._colorize(text, "91")
+    
+    def green(self, text):
+        return self._colorize(text, "92")
+    
+    def yellow(self, text):
+        return self._colorize(text, "93")
+    
+    def blue(self, text):
+        return self._colorize(text, "94")
+    
+    def grey(self, text):
+        return self._colorize(text, "90")
+    
+    def bold(self, text):
+        return self._colorize(text, "1")
+    
+    def success(self, text):
+        return self.green(f"[✓] {text}")
+    
+    def error(self, text):
+        return self.red(f"[X] {text}")
+    
+    def warning(self, text):
+        return self.yellow(f"[!] {text}")
+    
+    def info(self, text):
+        return self.blue(f"[i] {text}")
+
+colors = ColorSystem()
+
 def clear():
     if platform.system() == "Windows":
         os.system("cls")
@@ -78,6 +130,24 @@ def cost_change(price, is_bitcoin=False):
     
     return new_price
 
+def about():
+    clear()
+    print("MatcoinBank Simulator\n")
+    
+    print("Добро пожаловать в игру в жанре симулятора инвестирования и криптовалюты")
+    print("В этой игре вы можете инвестировать в различные валюты и получать прибыль (но это не гарантированно)")
+    print("А также можно попробавть себя в роли майнера и добыть монеты")
+    print("(учитывайте что некоторые вещи в игре могут отличаться от реальности)")
+    
+    print("\nРазработчики: ")
+    print("1. SuperDragon777")
+    print("2. SukunaRemen13")
+    print("3. Mglumov")
+    
+    print("\nРепозиторий на гитхабе:\nhttps://github.com/mglumov/matcoin-banc")
+    
+    input("\nНажмите Enter чтобы продолжить...")
+
 def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
     clear()
     print("Добро пожаловать в админ панель\n")
@@ -106,7 +176,7 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
             bal = userinput
             return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
         except:
-            print("Ошибка при попытке преобразования типа данных")
+            print(colors.error("Ошибка при попытке преобразования типа данных"))
             input()
             pass
             
@@ -117,7 +187,7 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
             matcoin_price = userinput 
             return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
         except:
-            print("Ошибка при попытке преобразования типа данных")
+            print(colors.error("Ошибка при попытке преобразования типа данных"))
             input()
             pass
     
@@ -128,7 +198,7 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
             bitcoin_price = userinput 
             return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
         except:
-            print("Ошибка при попытке преобразования типа данных")
+            print(colors.error("Ошибка при попытке преобразования типа данных"))
             input()
             pass
         
@@ -139,7 +209,7 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
             matcoin = userinput
             return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
         except:
-            print("Ошибка при попытке преобразования типа данных")
+            print(colors.error("Ошибка при попытке преобразования типа данных"))
             input()
             pass    
 
@@ -150,7 +220,7 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
             bitcoin = userinput
             return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
         except:
-            print("Ошибка при попытке преобразования типа данных")
+            print(colors.error("Ошибка при попытке преобразования типа данных"))
             input()
             pass    
         
@@ -327,7 +397,7 @@ def main():
     save = load_game()
     
     if save == "notfound":
-        print("Сохранение не найдено. Начинаем новую игру...")
+        print(colors.info("Сохранение не найдено. Начинаем новую игру..."))
         bal = 100
         matcoin = 0
         matcoin_price = random.randint(45, 67)
@@ -336,7 +406,7 @@ def main():
         input("Нажмите Enter для продолжения...")
         
     elif save is None:
-        print("Ошибка при загрузке сохранения. Начинаем новую игру...")
+        print(colors.error("Ошибка при загрузке сохранения. Начинаем новую игру..."))
         bal = 100
         matcoin = 0
         matcoin_price = random.randint(45, 67)
@@ -344,7 +414,7 @@ def main():
         bitcoin_price = random.randint(9000, 11000)
         input("Нажмите Enter для продолжения...")
     else:
-        print("Сохранение успешно загружено!")
+        print(colors.success("Сохранение успешно загружено!"))
         bal = save[0]
         matcoin = save[1]
         matcoin_price = save[2]
@@ -378,7 +448,7 @@ def main():
             print(f"Курс биткоина: 0.1 → {bitcoin_price}$ ━")
         
         print("\nЧто вы хотите сделать?")
-        print("1. Ничего")
+        print("1. Об игре")
         print("2. Выйти")
         print("3. Приобрести")
         print("4. Продать")
@@ -415,7 +485,7 @@ def main():
             save = load_game()
             
             if save is None:
-                print("Произошла ошибка при загрузке сохранения")
+                print(colors.error("Произошла ошибка при загрузке сохранения"))
                 input()
                 continue
             elif save == "notfound":
@@ -435,7 +505,7 @@ def main():
         elif userinput == "7":
             bitcoin = mine_btc(bitcoin)
         elif userinput == "1":
-            pass
+            about()
         else:
             pass
         
@@ -452,4 +522,4 @@ if __name__ == "__main__":
         print("\nПока!")
         sys.exit(0)
     except Exception as e:
-        print(f"Ошибка: {e}")
+        print(colors.error(f"Ошибка: {e}"))
