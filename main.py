@@ -167,15 +167,21 @@ def sell(bal, matcoin, matcoin_price):
 def main():
     bal = 100
     matcoin = 0
-    matcoin_price = 0
-    
     matcoin_price = random.randint(45, 67)
-
+    previous_price = matcoin_price
+    
     while True:
         clear()
         print(f"Ваш баланс: {bal}$")
         print(f"Ваши маткоины: {matcoin}")
-        print(f"\nКурс маткоина: 1 → {matcoin_price}$")
+        
+        price_diff = matcoin_price - previous_price
+        if price_diff > 0:
+            print(f"\nКурс маткоина: 1 → {matcoin_price}$ 📈 (+{price_diff}$)")
+        elif price_diff < 0:
+            print(f"\nКурс маткоина: 1 → {matcoin_price}$ 📉 ({price_diff}$)")
+        else:
+            print(f"\nКурс маткоина: 1 → {matcoin_price}$ ━")
         
         print("\nЧто вы хотите сделать?")
         print("1. Ничего")
