@@ -40,7 +40,7 @@ def load_game():
         return None
 
 
-def cost_change(matcoin_price):
+def old_cost_change(matcoin_price): #! УСТАРЕВШАЯ ФУНКЦИЯ, DO NOT USE
     way = bool(random.getrandbits(1))
     
     if way:
@@ -51,6 +51,20 @@ def cost_change(matcoin_price):
         if cost < 0:
             return 0
         return cost 
+
+def cost_change(matcoin_price):
+    volatility = random.uniform(-0.05, 0.05) # базовое событие (от -5% до +5%)
+    
+    if random.random() < 0.05:  # случайное событие (5% шанс)
+        volatility = random.uniform(-0.30, 0.30) # от -30% до +30%
+
+    change = int(matcoin_price * volatility)
+    new_price = matcoin_price + change
+    
+    if new_price < 1: # ограничение до 1
+        new_price = 1
+    
+    return new_price
 
 def admin(bal, matcoin, matcoin_price):
     clear()
