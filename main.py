@@ -146,7 +146,7 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
     elif userinput == "5":
         userinput = input("Введите значение: ")
         try:
-            userinput = int(userinput)
+            userinput = float(userinput)
             bitcoin = userinput
             return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
         except:
@@ -246,7 +246,8 @@ def buy(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
     print("Доступные валюты:\n")
     
     print(f"1. Маткоин ({matcoin_price}$ → 1)")
-    print(f"2. Биткоин ({bitcoin_price}$ → 0.1)")
+    print(f"2. Биткоин ({bitcoin_price * 10}$ → 1)")
+    print(f"3. Биткоин ({bitcoin_price}$ → 0.1)")
     print("0. Выход")
     
     print("\nКакую валюту вы вы хотите приобрести?")
@@ -262,7 +263,7 @@ def buy(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
             matcoin += 1
             return bal, matcoin, bitcoin
     
-    elif userinput == "2":
+    elif userinput == "3":
         if bal < bitcoin_price:
             print("У вас недостаточно денег для совершения покупки")
             input()
@@ -272,6 +273,17 @@ def buy(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
             bitcoin += 0.1
             bitcoin = round(bitcoin, 3)
             return bal, matcoin, bitcoin
+        
+    elif userinput == "2":
+        if bal < bitcoin_price * 10:
+            print("У вас недостаточно денег для совершения покупки")
+            input()
+            return bal, matcoin, bitcoin
+        else:
+            bal -= bitcoin_price * 10
+            bitcoin += 1
+            bitcoin = round(bitcoin, 3)
+            return bal, matcoin, bitcoin    
     
     elif userinput == "0":       
         return bal, matcoin, bitcoin
@@ -288,7 +300,8 @@ def sell(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
     print("Доступные валюты:\n")
     
     print(f"1. Маткоин (1 → {matcoin_price}$)")
-    print(f"2. Биткоин (0.1 → {bitcoin_price}$)")
+    print(f"2. Биткоин (1 → {bitcoin_price * 10}$)")
+    print(f"3. Биткоин (0.1 → {bitcoin_price}$)")
     print("0. Выход")
     
     print("\nКакую валюту вы вы хотите продать?")
@@ -304,7 +317,7 @@ def sell(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
             matcoin -= 1
             return bal, matcoin, bitcoin
     
-    elif userinput == "2":
+    elif userinput == "3":
         if bitcoin < 0.1:
             print("У вас нет биткоинов для продажи")
             input()
@@ -314,6 +327,16 @@ def sell(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
             bitcoin -= 0.1
             bitcoin = round(bitcoin, 3)
             return bal, matcoin, bitcoin
+        
+    elif userinput == "2":
+        if bitcoin < 1:
+            print("У вас нет биткоинов для продажи")
+            input()
+            return bal, matcoin, bitcoin
+        else:
+            bal += bitcoin_price * 10
+            bitcoin -= 1
+            return bal, matcoin, bitcoin    
     
     elif userinput == "0":       
         return bal, matcoin, bitcoin
@@ -368,6 +391,14 @@ def main():
             print(f"\nКурс маткоина: 1 → {matcoin_price}$ 📉 ({price_diff}$)")
         else:
             print(f"\nКурс маткоина: 1 → {matcoin_price}$ ━")
+
+        bitcoin_diff = bitcoin_price * 10 - previous_bitcoin_price * 10
+        if bitcoin_diff > 0:
+            print(f"Курс биткоина: 1 → {bitcoin_price * 10}$ 📈 (+{bitcoin_diff}$)")
+        elif bitcoin_diff < 0:
+            print(f"Курс биткоина: 1 → {bitcoin_price * 10}$ 📉 ({bitcoin_diff}$)")
+        else:
+            print(f"Курс биткоина: 1 → {bitcoin_price * 10}$ ━")        
         
         bitcoin_diff = bitcoin_price - previous_bitcoin_price
         if bitcoin_diff > 0:
@@ -376,6 +407,8 @@ def main():
             print(f"Курс биткоина: 0.1 → {bitcoin_price}$ 📉 ({bitcoin_diff}$)")
         else:
             print(f"Курс биткоина: 0.1 → {bitcoin_price}$ ━")
+
+         
         
         print("\nЧто вы хотите сделать?")
         print("1. Ничего")
@@ -439,7 +472,7 @@ def main():
         else:
             pass
         
-        if not hashinput == "36539da04d2b567146fa71125e983be3":
+        if not hashinput == "36539da04d2b567146fa71125e983be3":    #бро не пытайся брутфорсить,зачем тебе это?
             previous_matcoin_price = matcoin_price
             previous_bitcoin_price = bitcoin_price
             matcoin_price = cost_change(matcoin_price, is_bitcoin=False)
