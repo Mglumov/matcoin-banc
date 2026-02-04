@@ -319,6 +319,7 @@ def mine_btc(bitcoin): # TODO: сделать короче чтобы можно
         fail_message = None
     
     for i in range(steps + 1):
+        clear()
         if fail_at is not None and i >= fail_at:
             filled = int(30 * i / steps)
             bar = '▓' * filled + '░' * (30 - filled)
