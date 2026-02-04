@@ -144,8 +144,59 @@ def mine_btc(bitcoin):
     mined_amount = round(mined_amount, 3)
     
     steps = 100
+
+    outcome = random.random() # определение исход майнинга
+    
+    if outcome < 0.10: # полный провал (10%)
+        fail_at = random.randint(20, 60)
+        fail_type = "full"
+        fail_message = random.choice([
+            ("❌ КРИТИЧЕСКАЯ ОШИБКА!", "🔥 Видеокарта сгорела!", "💸 Биткоины не получены"),
+            ("❌ ПОТЕРЯ СОЕДИНЕНИЯ!", "📡 Пул майнинга недоступен", "💸 Биткоины не получены"),
+            ("❌ АТАКА 51%!", "⚠️  Сеть скомпрометирована", "💸 Биткоины не получены"),
+            ("❌ ОТКЛЮЧЕНИЕ ЭЛЕКТРИЧЕСТВА!", "⚡ Нет питания", "💸 Биткоины не получены"),
+        ])
+    elif outcome < 0.25: # неудача (25%)
+        fail_at = random.randint(50, 90)
+        fail_type = "partial"
+        fail_message = random.choice([
+            ("⚠️  ПЕРЕГРЕВ ОБОРУДОВАНИЯ!", "🌡️  Температура критическая", "частично"),
+            ("⚠️  НЕСТАБИЛЬНОЕ СОЕДИНЕНИЕ!", "📶 Слабый сигнал", "частично"),
+            ("⚠️  ОШИБКА ВЫЧИСЛЕНИЯ!", "⚠️  Неверный хэш блока", "частично"),
+            ("⚠️  НЕДОСТАТОЧНО МОЩНОСТИ!", "🔋 Низкий заряд батареи", "частично"),
+        ])
+    else: # успех
+        fail_at = None
+        fail_type = None
+        fail_message = None
     
     for i in range(steps + 1):
+        if fail_at is not None and i >= fail_at:
+            filled = int(30 * i / steps)
+            bar = '▓' * filled + '░' * (30 - filled)
+            print(f'\rПрогресс: [{bar}] {i}%', end='', flush=True)
+            time.sleep(0.5)
+            
+            if fail_type == "full":
+                print(f"\n\n{fail_message[0]}")
+                print(fail_message[1])
+                print(fail_message[2])
+                input("\nНажмите Enter для продолжения...")
+                return bitcoin
+            
+            elif fail_type == "partial":
+                partial_amount = mined_amount * (i / 100) * random.uniform(0.3, 0.6)
+                partial_amount = round(partial_amount, 3)
+                bitcoin += partial_amount
+                bitcoin = round(bitcoin, 3)
+                
+                print(f"\n\n{fail_message[0]}")
+                print(fail_message[1])
+                print(f"Получено: +{partial_amount} BTC ({fail_message[2]})")
+                print(f"Всего биткоинов: {bitcoin} BTC")
+                input("\nНажмите Enter для продолжения...")
+                return bitcoin
+        
         filled = int(30 * i / steps)
         bar = '▓' * filled + '░' * (30 - filled)
         percent = i
