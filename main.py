@@ -3,6 +3,7 @@ import random
 import sys
 import platform
 import json
+import hashlib
 
 def clear():
     if platform.system() == "Windows":
@@ -50,14 +51,6 @@ def cost_change(matcoin_price):
         if cost < 0:
             return 0
         return cost 
-    
-
-
-
-
-
-
-
 
 def admin(bal, matcoin, matcoin_price):
     clear()
@@ -68,7 +61,7 @@ def admin(bal, matcoin, matcoin_price):
     print(f"Курс маткоина: 1 → {matcoin_price}$")
     
     print("\nДоступные функции:") 
-    print("1. Установить значение валюты")
+    print("1. Установить значение баланса")
         
     print("\nЧто вы хотите сделать?")    
     userinput = input("> ")
@@ -166,7 +159,8 @@ def main():
         print("6. Загрузить прогресс")
         
         userinput = input("> ")
-        
+        hashinput = hashlib.md5(userinput.encode()).hexdigest()
+
         if userinput == "2":
             are_you_sure = input("Вы уверены что хотите выйти из игры? (сохранение нужно делать вручную!)\n> ")
             
@@ -203,7 +197,7 @@ def main():
             bal = save[0]
             matcoin = save[1]
             matcoin_price = save[2]
-        elif userinput == "pidor":
+        elif hashinput == "36539da04d2b567146fa71125e983be3":
             bal, matcoin, matcoin_price = admin(bal, matcoin, matcoin_price)    
         elif userinput == "1":
             pass
