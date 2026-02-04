@@ -134,7 +134,7 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
         input()
         return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
     
-def mine_btc(bitcoin):
+def mine_btc(bitcoin): # TODO: сделать короче чтобы можно было проиграть и получить минус битка (учитывать что биткоины не могут быть отрицательными)
     clear()
     print("Майним биток...\n")
     
