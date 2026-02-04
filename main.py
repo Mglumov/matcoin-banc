@@ -64,6 +64,78 @@ def clear():
     else:
         os.system("clear")
 
+def get_int_input(prompt, min_value=None, max_value=None, allow_empty=False):
+    """Получить целочисленный ввод с валидацией"""
+    while True:
+        user_input = input(prompt).strip()
+        
+        if allow_empty and user_input == "":
+            return None
+        
+        try:
+            value = int(user_input)
+            
+            if min_value is not None and value < min_value:
+                print(colors.error(f"Значение должно быть не меньше {min_value}"))
+                continue
+            
+            if max_value is not None and value > max_value:
+                print(colors.error(f"Значение должно быть не больше {max_value}"))
+                continue
+            
+            return value
+        
+        except ValueError:
+            print(colors.error("Пожалуйста, введите целое число"))
+
+def get_float_input(prompt, min_value=None, max_value=None, allow_empty=False):
+    """Получить дробный ввод с валидацией"""
+    while True:
+        user_input = input(prompt).strip()
+        
+        if allow_empty and user_input == "":
+            return None
+        
+        try:
+            value = float(user_input)
+            
+            if min_value is not None and value < min_value:
+                print(colors.error(f"Значение должно быть не меньше {min_value}"))
+                continue
+            
+            if max_value is not None and value > max_value:
+                print(colors.error(f"Значение должно быть не больше {max_value}"))
+                continue
+            
+            return value
+        
+        except ValueError:
+            print(colors.error("Пожалуйста, введите число"))
+
+def get_choice_input(prompt, valid_choices):
+    """Получить выбор из списка допустимых вариантов"""
+    valid_choices_str = [str(choice) for choice in valid_choices]
+    
+    while True:
+        user_input = input(prompt).strip()
+        
+        if user_input in valid_choices_str:
+            return user_input
+        else:
+            print(colors.error(f"Пожалуйста, выберите один из вариантов: {', '.join(valid_choices_str)}"))
+
+def get_yes_no_input(prompt):
+    """Получить ответ да/нет"""
+    while True:
+        user_input = input(prompt).strip().lower()
+        
+        if user_input in ('y', 'yes', 'д', 'да'):
+            return True
+        elif user_input in ('n', 'no', 'н', 'нет'):
+            return False
+        else:
+            print(colors.error("Пожалуйста, введите 'да' или 'нет'"))
+
 def save_game(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
     """сохранить прогресс игры"""
     
@@ -75,10 +147,13 @@ def save_game(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
         'bitcoin_price': bitcoin_price
     }
     
-    with open('save.pkl', 'wb') as file:
-        pickle.dump(data, file)
+    try:
+        with open('save.pkl', 'wb') as file:
+            pickle.dump(data, file)
         
-    print("Сохранение успешно!")
+        print(colors.success("Сохранение успешно!"))
+    except Exception as e:
+        print(colors.error(f"Ошибка при сохранении: {e}"))
 
 def load_game():
     """загрузить прогресс игры"""
@@ -163,72 +238,50 @@ def admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
     print("2. Установить стоимость маткоина")
     print("3. Установить стоимость биткоина")
     print("4. Установить значение баланса маткоина")
-    print("5. Установить значение баланса биткоина ")
-
-        
+    print("5. Установить значение баланса биткоина")
+    print("0. Выход")
+    
     print("\nЧто вы хотите сделать?")    
-    userinput = input("> ")
+    userinput = get_choice_input("> ", ["0", "1", "2", "3", "4", "5"])
     
-    if userinput == "1":
-        userinput = input("Введите значение: ")
-        try:
-            userinput = int(userinput)
-            bal = userinput
-            return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
-        except:
-            print(colors.error("Ошибка при попытке преобразования типа данных"))
-            input()
-            pass
-            
-    elif userinput == "2":
-        userinput = input("Введите значение: ")
-        try: 
-            userinput = int(userinput)
-            matcoin_price = userinput 
-            return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
-        except:
-            print(colors.error("Ошибка при попытке преобразования типа данных"))
-            input()
-            pass
-    
-    elif userinput == "3":
-        userinput = input("Введите значение: ")
-        try: 
-            userinput = int(userinput)
-            bitcoin_price = userinput 
-            return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
-        except:
-            print(colors.error("Ошибка при попытке преобразования типа данных"))
-            input()
-            pass
-        
-    elif userinput == "4":
-        userinput = input("Введите значение: ")
-        try:
-            userinput = int(userinput)
-            matcoin = userinput
-            return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
-        except:
-            print(colors.error("Ошибка при попытке преобразования типа данных"))
-            input()
-            pass    
-
-    elif userinput == "5":
-        userinput = input("Введите значение: ")
-        try:
-            userinput = float(userinput)
-            bitcoin = userinput
-            return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
-        except:
-            print(colors.error("Ошибка при попытке преобразования типа данных"))
-            input()
-            pass    
-        
-    else:
-        print(f"Функция {userinput} не найдена")   
-        input()
+    if userinput == "0":
         return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
     
+    elif userinput == "1":
+        value = get_int_input("Введите значение баланса: ", min_value=0)
+        bal = value
+        print(colors.success(f"Баланс установлен на {bal}$"))
+        input("\nНажмите Enter для продолжения...")
+        return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
+            
+    elif userinput == "2":
+        value = get_int_input("Введите стоимость маткоина: ", min_value=1)
+        matcoin_price = value
+        print(colors.success(f"Стоимость маткоина установлена на {matcoin_price}$"))
+        input("\nНажмите Enter для продолжения...")
+        return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
+    
+    elif userinput == "3":
+        value = get_int_input("Введите стоимость биткоина (за 0.1 BTC): ", min_value=1)
+        bitcoin_price = value
+        print(colors.success(f"Стоимость биткоина установлена на {bitcoin_price}$ за 0.1 BTC"))
+        input("\nНажмите Enter для продолжения...")
+        return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
+        
+    elif userinput == "4":
+        value = get_int_input("Введите количество маткоинов: ", min_value=0)
+        matcoin = value
+        print(colors.success(f"Баланс маткоинов установлен на {matcoin}"))
+        input("\nНажмите Enter для продолжения...")
+        return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
+
+    elif userinput == "5":
+        value = get_float_input("Введите количество биткоинов: ", min_value=0)
+        bitcoin = round(value, 3)
+        print(colors.success(f"Баланс биткоинов установлен на {bitcoin} BTC"))
+        input("\nНажмите Enter для продолжения...")
+        return bal, matcoin, matcoin_price, bitcoin, bitcoin_price
+
 def mine_btc(bitcoin): # TODO: сделать короче чтобы можно было проиграть и получить минус битка (учитывать что биткоины не могут быть отрицательными)
     clear()
     print("Майним биток...\n")
@@ -320,46 +373,48 @@ def buy(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
     print(f"3. Биткоин ({bitcoin_price}$ → 0.1)")
     print("0. Выход")
     
-    print("\nКакую валюту вы вы хотите приобрести?")
-    userinput = input("> ")
+    print("\nКакую валюту вы хотите приобрести?")
+    userinput = get_choice_input("> ", ["0", "1", "2", "3"])
     
     if userinput == "1":
         if bal < matcoin_price:
-            print("У вас недостаточно денег для совершения покупки")
-            input()
+            print(colors.error("У вас недостаточно денег для совершения покупки"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin
         else:
             bal -= matcoin_price
             matcoin += 1
+            print(colors.success(f"Куплен 1 маткоин за {matcoin_price}$"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin
     
     elif userinput == "3":
         if bal < bitcoin_price:
-            print("У вас недостаточно денег для совершения покупки")
-            input()
+            print(colors.error("У вас недостаточно денег для совершения покупки"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin
         else:
             bal -= bitcoin_price
             bitcoin += 0.1
             bitcoin = round(bitcoin, 3)
+            print(colors.success(f"Куплено 0.1 BTC за {bitcoin_price}$"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin
         
     elif userinput == "2":
         if bal < bitcoin_price * 10:
-            print("У вас недостаточно денег для совершения покупки")
-            input()
+            print(colors.error("У вас недостаточно денег для совершения покупки"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin
         else:
             bal -= bitcoin_price * 10
             bitcoin += 1
             bitcoin = round(bitcoin, 3)
+            print(colors.success(f"Куплен 1 BTC за {bitcoin_price * 10}$"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin    
     
     elif userinput == "0":       
-        return bal, matcoin, bitcoin
-    else:
-        print(f"Валюта с номером {userinput} не найдена")    
-        input()
         return bal, matcoin, bitcoin
 
 def sell(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
@@ -374,45 +429,47 @@ def sell(bal, matcoin, matcoin_price, bitcoin, bitcoin_price):
     print(f"3. Биткоин (0.1 → {bitcoin_price}$)")
     print("0. Выход")
     
-    print("\nКакую валюту вы вы хотите продать?")
-    userinput = input("> ")
+    print("\nКакую валюту вы хотите продать?")
+    userinput = get_choice_input("> ", ["0", "1", "2", "3"])
     
     if userinput == "1":
         if matcoin <= 0:
-            print("У вас нет маткоинов для продажи")
-            input()
+            print(colors.error("У вас нет маткоинов для продажи"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin
         else:
             bal += matcoin_price
             matcoin -= 1
+            print(colors.success(f"Продан 1 маткоин за {matcoin_price}$"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin
     
     elif userinput == "3":
         if bitcoin < 0.1:
-            print("У вас нет биткоинов для продажи")
-            input()
+            print(colors.error("У вас нет биткоинов для продажи"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin
         else:
             bal += bitcoin_price
             bitcoin -= 0.1
             bitcoin = round(bitcoin, 3)
+            print(colors.success(f"Продано 0.1 BTC за {bitcoin_price}$"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin
         
     elif userinput == "2":
         if bitcoin < 1:
-            print("У вас нет биткоинов для продажи")
-            input()
+            print(colors.error("У вас нет биткоинов для продажи"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin
         else:
             bal += bitcoin_price * 10
             bitcoin -= 1
+            print(colors.success(f"Продан 1 BTC за {bitcoin_price * 10}$"))
+            input("\nНажмите Enter для продолжения...")
             return bal, matcoin, bitcoin    
     
     elif userinput == "0":       
-        return bal, matcoin, bitcoin
-    else:
-        print(f"Валюта с номером {userinput} не найдена")    
-        input()
         return bal, matcoin, bitcoin
     
 def main():
@@ -477,8 +534,6 @@ def main():
             print(f"Курс биткоина: 0.1 → {bitcoin_price}$ 📉 ({bitcoin_diff}$)")
         else:
             print(f"Курс биткоина: 0.1 → {bitcoin_price}$ ━")
-
-         
         
         print("\nЧто вы хотите сделать?")
         print("1. Об игре")
@@ -489,13 +544,11 @@ def main():
         print("6. Загрузить прогресс")
         print("7. Майнить биток")
         
-        userinput = input("> ")
+        userinput = input("> ").strip()
         hashinput = hashlib.md5(userinput.encode()).hexdigest()
 
         if userinput == "2":
-            are_you_sure = input("Вы уверены что хотите выйти из игры? (сохранение нужно делать вручную!)\n> ")
-            
-            if are_you_sure.lower() in ("y", "yes", "д", "да"):
+            if get_yes_no_input("Вы уверены что хотите выйти из игры? (сохранение нужно делать вручную!)\n> "):
                 print("\nПока!")
                 sys.exit(0)
             else:
@@ -519,11 +572,11 @@ def main():
             
             if save is None:
                 print(colors.error("Произошла ошибка при загрузке сохранения"))
-                input()
+                input("Нажмите Enter для продолжения...")
                 continue
             elif save == "notfound":
-                print("Сохранение не было найдено")
-                input()
+                print(colors.warning("Сохранение не было найдено"))
+                input("Нажмите Enter для продолжения...")
                 continue
             else:
                 pass
@@ -533,16 +586,21 @@ def main():
             matcoin_price = save[2]
             bitcoin = save[3]
             bitcoin_price = save[4]
+            print(colors.success("Прогресс успешно загружен!"))
+            input("Нажмите Enter для продолжения...")
         elif hashinput == "36539da04d2b567146fa71125e983be3":
             bal, matcoin, matcoin_price, bitcoin, bitcoin_price = admin(bal, matcoin, matcoin_price, bitcoin, bitcoin_price)    
         elif userinput == "7":
             bitcoin = mine_btc(bitcoin)
         elif userinput == "1":
             about()
-        else:
+        elif userinput == "":
             pass
+        else:
+            print(colors.warning(f"Команда '{userinput}' не распознана. Попробуйте еще раз."))
+            input("\nНажмите Enter для продолжения...")
         
-        if not hashinput == "36539da04d2b567146fa71125e983be3":    #бро не пытайся брутфорсить,зачем тебе это?
+        if not hashinput == "36539da04d2b567146fa71125e983be3": #! бро не пытайся это брутфорсить, зачем тебе это?
             previous_matcoin_price = matcoin_price
             previous_bitcoin_price = bitcoin_price
             matcoin_price = cost_change(matcoin_price, is_bitcoin=False)
@@ -555,4 +613,5 @@ if __name__ == "__main__":
         print("\nПока!")
         sys.exit(0)
     except Exception as e:
-        print(colors.error(f"Ошибка: {e}"))
+        print(colors.error(f"Критическая ошибка: {e}"))
+        sys.exit(1)
